@@ -1,15 +1,9 @@
-from dataclasses import dataclass
 from typing import List, Dict, Any
+from .spark_types import DataType, Field
+from .default_mock_data import get_default_mock_tables
 
-@dataclass
-class Field:
-    name: str
-    dataType: type
-
-class DataType:
-    """
-    Mock para tipos de dados do Spark, suportando tipos primitivos e complexos
-    """
+class MockSchema:
+    """Schema mock para simular o schema do Spark"""
     def __init__(self, type_str: str = "string", element_type: 'DataType' = None):
         self._type = type_str.lower()
         self._element_type = element_type
@@ -118,14 +112,14 @@ class MockDataFrame:
 class MockSpark:
     """Mock para simular uma sessão Spark"""
     
-    def __init__(self, mock_tables: Dict[str, List[Dict[str, Any]]] = None):
+    def __init__(self, mock_tables: Dict[str, Dict[str, Any]] = None):
         """
         Inicializa o MockSpark com tabelas simuladas
         
         Args:
-            mock_tables: Dicionário com nome da tabela -> lista de dicionários com dados
+            mock_tables: Dicionário com nome da tabela -> configuração da tabela
         """
-        self.mock_tables = mock_tables or {}
+        self.mock_tables = mock_tables or get_default_mock_tables()
         self._table_comments = {}
         self._column_comments = {}
         self._table_properties = {}
@@ -144,20 +138,12 @@ class MockSpark:
         if not self.mock_tables or name not in self.mock_tables:
             raise ValueError(f"Tabela não encontrada: {name}")
             
-        # Se a tabela existe mas está vazia
+        # Se a tabela existe, retorna DataFrame com os campos definidos
         table_data = self.mock_tables[name]
         if not table_data:
             raise ValueError(f"Tabela não encontrada: {name}")
             
-        # Caso contrário, retorna DataFrame com schema inferido dos dados
-        sample_record = table_data[0]
-        fields = []
-        
-        for col_name, value in sample_record.items():
-            field_type = self._infer_type(value)
-            fields.append(Field(name=col_name, dataType=field_type))
-            
-        return MockDataFrame(fields)
+        return MockDataFrame(table_data["fields"])
         
     def sql(self, query: str):
         """Simula execução de queries SQL"""

@@ -1,16 +1,4 @@
 tables:
-  # Tabela que não existe (para testar validação de existência)
-  nonexistent_table:
-    table_path: catalogo.schema.nonexistent
-    metadata:
-      product: "TACIA"
-      data_owner: "teste@exemplo.com"
-      nivel_compartilhamento: "publico"
-    columns:
-      - name: id
-        type: integer
-        required: true
-
   # Tabela com tipos corretos (caso de sucesso)
   valid_table:
     table_path: catalogo.schema.valid_table
@@ -51,113 +39,60 @@ tables:
         metadata:
           descricao: "Metadados estruturados"
           categoria: "Configuração"
-      - name: tags
-        type: array
-        metadata:
-          descricao: "Lista de tags"
-          categoria: "Classificação"
 
-  # Tabela com colunas faltando
-  missing_columns_table:
-    table_path: catalogo.schema.missing_columns
+  # Tabela com todos os tipos de dados para teste
+  types_table:
+    table_path: catalogo.schema.types_table
     metadata:
       product: "TACIA"
       data_owner: "teste@exemplo.com"
       nivel_compartilhamento: "publico"
     columns:
-      - name: id
-        type: integer
-        required: true
-        metadata:
-          descricao: "Identificador único"
-          categoria: "Chave"
-      - name: nome
+      - name: string_col
         type: string
-        required: true  # Esta coluna está faltando nos dados
         metadata:
-          descricao: "Nome do registro"
-          categoria: "Informação"
-      - name: valor
+          descricao: "Campo string"
+      - name: int_col
+        type: integer
+        metadata:
+          descricao: "Campo inteiro"
+      - name: long_col
+        type: long
+        metadata:
+          descricao: "Campo long"
+      - name: float_col
+        type: float
+        metadata:
+          descricao: "Campo float"
+      - name: double_col
         type: double
-        required: false
         metadata:
-          descricao: "Valor do registro"
-          categoria: "Métrica"
-      - name: data
-        type: string
-        required: false
+          descricao: "Campo double"
+      - name: decimal_col
+        type: decimal
         metadata:
-          descricao: "Data do registro"
-          categoria: "Temporal"
-
-  # Tabela com tipos incompatíveis
-  wrong_types_table:
-    table_path: catalogo.schema.wrong_types
-    metadata:
-      product: "TACIA"
-      data_owner: "teste@exemplo.com"
-      nivel_compartilhamento: "publico"
-    columns:
-      - name: id
-        type: integer  # Na tabela está como string
-        required: true
+          descricao: "Campo decimal"
+      - name: bool_col
+        type: boolean
         metadata:
-          descricao: "Identificador único"
-          categoria: "Chave"
-      - name: nome
-        type: string
-        required: true
+          descricao: "Campo booleano"
+      - name: date_col
+        type: date
         metadata:
-          descricao: "Nome do registro"
-          categoria: "Informação"
-      - name: valor
-        type: double  # Na tabela está como string
-        required: true
+          descricao: "Campo data"
+      - name: timestamp_col
+        type: timestamp
         metadata:
-          descricao: "Valor do registro"
-          categoria: "Métrica"
-      - name: ativo
-        type: boolean  # Na tabela está como string
-        required: true
-        metadata:
-          descricao: "Status de ativação"
-          categoria: "Status"
-
-  # Tabela com tipos complexos
-  complex_types_table:
-    table_path: catalogo.schema.complex_types
-    metadata:
-      product: "TACIA"
-      data_owner: "teste@exemplo.com"
-      nivel_compartilhamento: "publico"
-    columns:
-      - name: id
-        type: integer
-        required: true
-        metadata:
-          descricao: "Identificador único"
-          categoria: "Chave"
-      - name: metadata
-        type: struct
-        required: true
-        metadata:
-          descricao: "Metadados estruturados"
-          categoria: "Configuração"
-      - name: tags
+          descricao: "Campo timestamp"
+      - name: array_col
         type: array
-        required: true
         metadata:
-          descricao: "Lista de tags"
-          categoria: "Classificação"
-      - name: config
+          descricao: "Campo array"
+      - name: map_col
+        type: map
+        metadata:
+          descricao: "Campo map"
+      - name: struct_col
         type: struct
-        required: true
         metadata:
-          descricao: "Configurações estruturadas"
-          categoria: "Configuração"
-      - name: scores
-        type: array
-        required: true
-        metadata:
-          descricao: "Lista de pontuações"
-          categoria: "Métrica"
+          descricao: "Campo struct"

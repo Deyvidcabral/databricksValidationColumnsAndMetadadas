@@ -27,7 +27,7 @@ def process_yaml_files(spark, yaml_folder: str = ".", bundle_target: str = "prd"
         # Processa cada tabela
         for tabela_nome, tabela_info in yaml_data.get("tables", {}).items():
             # Extrai metadados
-            table_path, tag_dict, fields_description, fields_types = get_table_metadata(tabela_info)
+            table_path, tag_dict, fields_description, fields_types, columns_info = get_table_metadata(tabela_info)
             
             if not table_path:
                 print("[SKIP] Nenhum table_path definido.")
@@ -39,7 +39,8 @@ def process_yaml_files(spark, yaml_folder: str = ".", bundle_target: str = "prd"
                 table_name=table_path,
                 fields_description=fields_description,
                 tag_dict=tag_dict,
-                fields_types=fields_types
+                fields_types=fields_types,
+                columns_info=columns_info
             )
 
 if __name__ == "__main__":
@@ -47,4 +48,7 @@ if __name__ == "__main__":
     from src.db.spark_mock import MockSpark
     spark = MockSpark()
     
-    process_yaml_files(spark)
+    print(spark)
+    print(spark.mock_tables)
+
+    #process_yaml_files(spark)
