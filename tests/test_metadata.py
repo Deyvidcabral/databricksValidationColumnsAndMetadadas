@@ -43,31 +43,26 @@ def process_table(spark, yaml_data, table_name, use_path_directly=False) -> Proc
         use_path_directly: Se True, usa table_name diretamente como caminho
     """
     try:
-        if use_path_directly:
-            # Usa o caminho completo diretamente
-            return add_metadata_to_table(
-                spark=spark,
-                table_name=table_name,
-                fields_description=fields_description,
-                columns_info=columns_info,
-                tag_dict=tag_dict,
-                fields_types=fields_types
-            )
-            
-        if table_name not in yaml_data.get("tables", {}):
+        # Primeiro obtém a tabela do YAML pelo nome completo
+        yaml_table_name = table_name.split('.')[-1] + '_table' if use_path_directly else table_name
+        if yaml_table_name not in yaml_data.get("tables", {}):
             return ProcessResult(
                 table_name=table_name,
                 validation=None,
                 success=False,
-                error_message=f"Tabela '{table_name}' não encontrada no arquivo YAML"
+                error_message=f"Tabela '{yaml_table_name}' não encontrada no arquivo YAML"
             )
             
-        table_info = yaml_data["tables"][table_name]
+        # Obtém as informações da tabela do YAML
+        table_info = yaml_data["tables"][yaml_table_name]
         table_path, tag_dict, fields_description, fields_types, columns_info = get_table_metadata(table_info)
+        
+        # Se use_path_directly for True, usa o nome da tabela fornecido
+        actual_table_name = table_name if use_path_directly else table_path
         
         return add_metadata_to_table(
             spark=spark,
-            table_name=table_path,
+            table_name=actual_table_name,
             fields_description=fields_description,
             columns_info=columns_info,
             tag_dict=tag_dict,
@@ -87,13 +82,10 @@ def test_column_type_mismatch():
     yaml_data = process_yaml_file("test_tables.yml")
     
     print("\n=== Teste de Incompatibilidade de Tipos ===")
-    result = process_table(spark, yaml_data, "responses_table")
-    if not result.success and result.error_message and "não encontrada" in result.error_message:
-        print("  ⚠️ Tentando com caminho completo...")
-        # Se falhar, obter o caminho do YAML e usar diretamente
-        table_info = yaml_data["tables"]["responses_table"]
-        table_path, _, _, _, _ = get_table_metadata(table_info)
-        result = process_table(spark, yaml_data, table_path, use_path_directly=True)
+    # Sempre usa o caminho completo da tabela
+    table_info = yaml_data["tables"]["responses_table"]
+    table_path, _, _, _, _ = get_table_metadata(table_info)
+    result = process_table(spark, yaml_data, table_path, use_path_directly=True)
     return result
 
 def test_complex_types():
@@ -102,13 +94,10 @@ def test_complex_types():
     yaml_data = process_yaml_file("test_tables.yml")
     
     print("\n=== Teste de Tipos Complexos ===")
-    result = process_table(spark, yaml_data, "questions_table")
-    if not result.success and result.error_message and "não encontrada" in result.error_message:
-        print("  ⚠️ Tentando com caminho completo...")
-        # Se falhar, obter o caminho do YAML e usar diretamente
-        table_info = yaml_data["tables"]["questions_table"]
-        table_path, _, _, _, _ = get_table_metadata(table_info)
-        result = process_table(spark, yaml_data, table_path, use_path_directly=True)
+    # Sempre usa o caminho completo da tabela
+    table_info = yaml_data["tables"]["questions_table"]
+    table_path, _, _, _, _ = get_table_metadata(table_info)
+    result = process_table(spark, yaml_data, table_path, use_path_directly=True)
     return result
 
 def run_all_tests():
