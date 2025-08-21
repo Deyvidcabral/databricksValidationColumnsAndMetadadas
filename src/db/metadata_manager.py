@@ -194,18 +194,28 @@ class MetadataManager:
                 
                 # Mapeamento de tipos Spark para tipos do template
                 type_mappings = {
-                    'string': ['string', 'str'],
-                    'integer': ['int', 'integer', 'long', 'short'],
+                    'string': ['string', 'str', 'varchar', 'char', 'text'],
+                    'integer': ['int', 'integer', 'long', 'short', 'bigint'],
                     'double': ['float', 'double', 'decimal'],
                     'boolean': ['bool', 'boolean'],
                     'timestamp': ['timestamp', 'datetime'],
-                    'date': ['date']
+                    'date': ['date'],
+                    'array': ['array', 'array<string>', 'array<double>'],
+                    'struct': ['struct', 'struct<*>', 'map', 'map<string,string>'],
+                    'binary': ['binary']
                 }
+                
+                # Verifica tipos complexos primeiro
+                if expected_type in ['array', 'struct', 'map']:
+                    if actual_type.startswith(expected_type):
+                        continue  # Considera válido se o tipo base corresponde
                 
                 # Verifica se o tipo atual corresponde ao tipo esperado
                 is_valid = False
                 for base_type, valid_types in type_mappings.items():
-                    if expected_type in valid_types and actual_type in valid_types:
+                    if (expected_type in valid_types and 
+                        (actual_type in valid_types or 
+                         any(actual_type.startswith(t) for t in valid_types))):
                         is_valid = True
                         break
                         

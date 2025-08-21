@@ -1,53 +1,51 @@
 tables:
-  responses_table:
-    table_path: prd_estruturante.silver_postgresql_argilla.responses
+  # Tabela que não existe (para testar validação de existência)
+  nonexistent_table:
+    table_path: catalogo.schema.nonexistent
     metadata:
       product: "TACIA"
       data_owner: "teste@exemplo.com"
-      data_source_repository: "https://github.com/exemplo/repo"
-      nivel_compartilhamento: "restrito"
+      nivel_compartilhamento: "publico"
     columns:
-      # Colunas existentes com tipos corretos
       - name: id
         type: integer
-        required: true  # Coluna obrigatória
+        required: true
+
+  # Tabela com tipos corretos (caso de sucesso)
+  valid_table:
+    table_path: catalogo.schema.valid_table
+    metadata:
+      product: "TACIA"
+      data_owner: "teste@exemplo.com"
+      nivel_compartilhamento: "publico"
+    columns:
+      - name: id
+        type: integer
+        required: true
         metadata:
           descricao: "Identificador único"
           categoria: "Chave"
-      - name: nome
+      - name: name
         type: string
-        required: true  # Coluna obrigatória
+        required: true
         metadata:
           descricao: "Nome do registro"
           categoria: "Informação"
-      
-      # Colunas existentes com tipos incorretos
-      - name: valor
-        type: integer  # Deveria ser double
-        metadata:
-          descricao: "Valor numérico"
-          categoria: "Métrica"
-      - name: ativo
-        type: string  # Deveria ser boolean
+      - name: active
+        type: boolean
         metadata:
           descricao: "Status de ativação"
           categoria: "Status"
-      
-      # Colunas que não existem na tabela
-      - name: coluna_inexistente
-        type: string
-        required: true  # Vai gerar erro por não existir
+      - name: value
+        type: integer
         metadata:
-          descricao: "Coluna que não existe"
-          categoria: "Teste"
-      - name: outra_inexistente
+          descricao: "Valor inteiro"
+          categoria: "Métrica"
+      - name: created_at
         type: timestamp
-        required: false  # Vai gerar apenas warning por não existir
         metadata:
-          descricao: "Outra coluna que não existe"
-          categoria: "Teste"
-      
-      # Colunas existentes com tipos complexos
+          descricao: "Data de criação"
+          categoria: "Temporal"
       - name: metadata
         type: struct
         metadata:
@@ -59,52 +57,107 @@ tables:
           descricao: "Lista de tags"
           categoria: "Classificação"
 
-  questions_table:
-    table_path: prd_estruturante.silver_postgresql_argilla.questions
+  # Tabela com colunas faltando
+  missing_columns_table:
+    table_path: catalogo.schema.missing_columns
     metadata:
       product: "TACIA"
       data_owner: "teste@exemplo.com"
       nivel_compartilhamento: "publico"
     columns:
-      # Colunas existentes com tipos corretos
-      - name: question_id
-        type: long
+      - name: id
+        type: integer
+        required: true
         metadata:
-          descricao: "ID da questão"
+          descricao: "Identificador único"
           categoria: "Chave"
-      - name: text
+      - name: nome
         type: string
+        required: true  # Esta coluna está faltando nos dados
         metadata:
-          descricao: "Texto da pergunta"
-          categoria: "Conteúdo"
-      
-      # Tipos incorretos para testar
-      - name: score
-        type: integer  # Deveria ser double
+          descricao: "Nome do registro"
+          categoria: "Informação"
+      - name: valor
+        type: double
+        required: false
         metadata:
-          descricao: "Pontuação"
+          descricao: "Valor do registro"
           categoria: "Métrica"
-      - name: is_active
-        type: int  # Deveria ser boolean
+      - name: data
+        type: string
+        required: false
+        metadata:
+          descricao: "Data do registro"
+          categoria: "Temporal"
+
+  # Tabela com tipos incompatíveis
+  wrong_types_table:
+    table_path: catalogo.schema.wrong_types
+    metadata:
+      product: "TACIA"
+      data_owner: "teste@exemplo.com"
+      nivel_compartilhamento: "publico"
+    columns:
+      - name: id
+        type: integer  # Na tabela está como string
+        required: true
+        metadata:
+          descricao: "Identificador único"
+          categoria: "Chave"
+      - name: nome
+        type: string
+        required: true
+        metadata:
+          descricao: "Nome do registro"
+          categoria: "Informação"
+      - name: valor
+        type: double  # Na tabela está como string
+        required: true
+        metadata:
+          descricao: "Valor do registro"
+          categoria: "Métrica"
+      - name: ativo
+        type: boolean  # Na tabela está como string
+        required: true
         metadata:
           descricao: "Status de ativação"
           categoria: "Status"
-      
-      # Colunas inexistentes
-      - name: autor
-        type: string
+
+  # Tabela com tipos complexos
+  complex_types_table:
+    table_path: catalogo.schema.complex_types
+    metadata:
+      product: "TACIA"
+      data_owner: "teste@exemplo.com"
+      nivel_compartilhamento: "publico"
+    columns:
+      - name: id
+        type: integer
+        required: true
         metadata:
-          descricao: "Autor da pergunta"
-          categoria: "Responsável"
-      
-      # Colunas com tipos complexos
-      - name: properties
-        type: map
+          descricao: "Identificador único"
+          categoria: "Chave"
+      - name: metadata
+        type: struct
+        required: true
         metadata:
-          descricao: "Propriedades adicionais"
+          descricao: "Metadados estruturados"
           categoria: "Configuração"
-      - name: options
+      - name: tags
         type: array
+        required: true
         metadata:
-          descricao: "Opções de resposta"
-          categoria: "Conteúdo"
+          descricao: "Lista de tags"
+          categoria: "Classificação"
+      - name: config
+        type: struct
+        required: true
+        metadata:
+          descricao: "Configurações estruturadas"
+          categoria: "Configuração"
+      - name: scores
+        type: array
+        required: true
+        metadata:
+          descricao: "Lista de pontuações"
+          categoria: "Métrica"
