@@ -1,0 +1,48 @@
+tables:
+  tabela1:
+    table_path: _estruturante.silver_postgresql_argilla.responses
+    metadata:
+      "product": "TACIA"
+      "data_owner": "deyvid.lima@yduqs.com.br"
+      "data_tech_owner": "andre.russi@yduqs.com.br;deyvid.lima@yduqs.com.br"
+      "data_source_repository": "https://arquiteturaestacio.visualstudio.com/YDUQS%20-%20AI/_git/ia-yduqs-tacia-metadados"
+      "nivel_compartilhamento": "publico"
+    columns:
+      - name: coluna1
+        metadata:
+          "descricao": "Classificação da pergunta"
+          "categoria": "Classificação"
+          "detalhamento": "Classificação atribuída à pergunta"
+          "origem": "${bundle.target}_estruturante.silver_postgresql_argilla.responses"
+        type: string
+      - name: coluna2
+        metadata:
+          descricao: "Coluna 1 é a chave primária"
+          tipo: string
+          categoria: "Classificação 3"
+          categoria3: "Classificação 4"
+        type: string
+      - name: coluna3
+        metadata:
+          descricao: "Coluna 1 é a chave primária"
+          tipo: string
+        type: string
+  tabela2:
+    table_path: _estruturante.silver_postgresql_argilla.questions
+    columns:
+      - name: coluna1
+        metadata:
+          descricao: "Coluna 1 é a chave primária"
+          tipo: string
+        type: string
+      - name: coluna2
+        metadata:
+          descricao: "Coluna 1 é a chave primária"     
+        type: string
+      - name: coluna3
+        metadata:
+          descricao": "Classificação da pergunta"
+          "categoria": "Classificação"
+          "detalhamento": "Classificação atribuída à pergunta"
+          "origem": "${bundle.target}_estruturante.silver_postgresql_argilla.questions"
+        type: string

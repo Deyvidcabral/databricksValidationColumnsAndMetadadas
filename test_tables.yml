@@ -1,0 +1,110 @@
+tables:
+  responses_table:
+    table_path: prd_estruturante.silver_postgresql_argilla.responses
+    metadata:
+      product: "TACIA"
+      data_owner: "teste@exemplo.com"
+      data_source_repository: "https://github.com/exemplo/repo"
+      nivel_compartilhamento: "restrito"
+    columns:
+      # Colunas existentes com tipos corretos
+      - name: id
+        type: integer
+        required: true  # Coluna obrigatória
+        metadata:
+          descricao: "Identificador único"
+          categoria: "Chave"
+      - name: nome
+        type: string
+        required: true  # Coluna obrigatória
+        metadata:
+          descricao: "Nome do registro"
+          categoria: "Informação"
+      
+      # Colunas existentes com tipos incorretos
+      - name: valor
+        type: integer  # Deveria ser double
+        metadata:
+          descricao: "Valor numérico"
+          categoria: "Métrica"
+      - name: ativo
+        type: string  # Deveria ser boolean
+        metadata:
+          descricao: "Status de ativação"
+          categoria: "Status"
+      
+      # Colunas que não existem na tabela
+      - name: coluna_inexistente
+        type: string
+        required: true  # Vai gerar erro por não existir
+        metadata:
+          descricao: "Coluna que não existe"
+          categoria: "Teste"
+      - name: outra_inexistente
+        type: timestamp
+        required: false  # Vai gerar apenas warning por não existir
+        metadata:
+          descricao: "Outra coluna que não existe"
+          categoria: "Teste"
+      
+      # Colunas existentes com tipos complexos
+      - name: metadata
+        type: struct
+        metadata:
+          descricao: "Metadados estruturados"
+          categoria: "Configuração"
+      - name: tags
+        type: array
+        metadata:
+          descricao: "Lista de tags"
+          categoria: "Classificação"
+
+  questions_table:
+    table_path: prd_estruturante.silver_postgresql_argilla.questions
+    metadata:
+      product: "TACIA"
+      data_owner: "teste@exemplo.com"
+      nivel_compartilhamento: "publico"
+    columns:
+      # Colunas existentes com tipos corretos
+      - name: question_id
+        type: long
+        metadata:
+          descricao: "ID da questão"
+          categoria: "Chave"
+      - name: text
+        type: string
+        metadata:
+          descricao: "Texto da pergunta"
+          categoria: "Conteúdo"
+      
+      # Tipos incorretos para testar
+      - name: score
+        type: integer  # Deveria ser double
+        metadata:
+          descricao: "Pontuação"
+          categoria: "Métrica"
+      - name: is_active
+        type: int  # Deveria ser boolean
+        metadata:
+          descricao: "Status de ativação"
+          categoria: "Status"
+      
+      # Colunas inexistentes
+      - name: autor
+        type: string
+        metadata:
+          descricao: "Autor da pergunta"
+          categoria: "Responsável"
+      
+      # Colunas com tipos complexos
+      - name: properties
+        type: map
+        metadata:
+          descricao: "Propriedades adicionais"
+          categoria: "Configuração"
+      - name: options
+        type: array
+        metadata:
+          descricao: "Opções de resposta"
+          categoria: "Conteúdo"
